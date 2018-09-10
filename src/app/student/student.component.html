@@ -1,0 +1,147 @@
+<div class="container-fluid mt-5">
+  <div class="row">
+    <div class="col-md-3">
+
+
+
+      <div class="mt-2 mb-2">
+        <div class="card">
+          <div class="card-header">
+            <span>
+              <h5> Class Summary</h5>
+            </span>
+          </div>
+          <div class="card-body">
+            <table class="table table-condensed table-light">
+              <tr>
+                <th>Total Stregth</th>
+                <td> {{ rows.length }}</td>
+              </tr>
+              <tr>
+                <th>Max Grade</th>
+                <td> {{ maxGrade }}</td>
+              </tr>
+              <tr>
+                <th>Avg Grade</th>
+                <td> {{ avgGrade }}</td>
+              </tr>
+              <tr>
+                <th>Min Grade</th>
+                <td> {{ minGrade }}</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="col-md-9">
+
+      <div class="mb-2">
+        <button class="btn btn-success" (click)="addRecord()">
+          <i class="fa fa-plus"></i> Add New Record
+        </button>
+      </div>
+
+      <div class="card" *ngIf="isNewRecord">
+        <div class="card-body">
+          <form [formGroup]="studentForm">
+            <div class="row">
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label for="studid">Student Id:</label>
+                  <input type="number" class="form-control" formControlName="studentId" id="studid">
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label for="studname">Student Name:</label>
+                  <input type="text" class="form-control" formControlName="studentName" id="studname">
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-group">
+                  <label for="subject3">Test Score:</label>
+                  <input type="number" class="form-control" formControlName="testScore" id="testScore" min="1" max="100">
+                </div>
+              </div>
+              
+              <div style="margin-top:25px;">
+              <div class="form-group">
+                <button type="submit" [disabled]="!studentForm.valid" (click)="add()" class="btn btn-success m-2">Add</button>
+                <button type="submit" (click)="isNewRecord=false" class="btn btn-default m-2">Cancel</button>
+              </div>
+            </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+
+
+
+      <p-dataTable #dt [value]="rows" [editable]="true" [immutable]="false" [rows]="10" [paginator]="true" [pageLinks]="3" [rowsPerPageOptions]="[10,20,30]">
+        <p-column field="studentId" header="Student Id" [style]="{'width':'100px'}"></p-column>
+        <p-column field="studentName" header="Student Name" [style]="{'width':'200px'}">
+          <ng-template let-row="rowData" pTemplate="body">
+            <div *ngIf="!row.isEditable">
+              <span> {{ row.studentName }}</span>
+            </div>
+            <div *ngIf="row.isEditable">
+              <input type="text" class="form-control" [(ngModel)]="row.studentName">
+            </div>
+          </ng-template>
+        </p-column>
+        <p-column field="testScore" header="Test Score" [style]="{'width':'140px'}">
+          <ng-template let-row="rowData" pTemplate="body">
+            <div *ngIf="!row.isEditable">
+              {{row.testScore}}
+            </div>
+            <div *ngIf="row.isEditable">
+              <input type="number" (change)="testScoreChanged(row)" class="form-control" [(ngModel)]="row.testScore">
+            </div>
+          </ng-template>
+        </p-column>
+        <p-column field="grade" header="Grade" [style]="{'width':'120px'}">
+          <ng-template let-row="rowData" pTemplate="body">
+            <span class="badge" [ngClass]="( row.grade=='FAIL')?'fail':'pass'"> {{ row.grade }}</span>
+          </ng-template>
+        </p-column>
+
+        <p-column styleClass="col-button" [style]="{'width':'120px'}">
+          <ng-template pTemplate="header">
+            <span>
+              Operations
+            </span>
+          </ng-template>
+          <ng-template let-row="rowData" pTemplate="body" let-i="rowIndex">
+            <div class="text-center">
+              <span style="margin: 2px;">
+                <span *ngIf="!row.isEditable">
+                  <a href="javascript:" (click)="editRecord(row)">
+                    <i class="fa fa-edit" style="background-color: green; color:white; padding:5px;"></i>
+                  </a>
+                </span>
+
+                <span *ngIf="isEditable && row.isEditable">
+                  <a href="javascript:" (click)="saveRecord(row)" style="margin: 2px;">
+                    <i class="fa fa-save" style="background-color: green; color:white; padding:5px;"></i>
+                  </a>
+                  <a href="javascript:" (click)="cancelRecord(row)" style="margin: 2px;">
+                    <i class="fa fa-remove" style="background-color: #777; color:white; padding:5px;"></i>
+                  </a>
+                </span>
+
+              </span>
+              <span style="margin: 2px;" *ngIf="!row.isEditable">
+                <a href="javascript:" (click)="deleteRecord(i)">
+                  <i class="fa fa-trash-o" style="background-color: red; color:white; padding: 5px;"></i>
+                </a>
+              </span>
+            </div>
+          </ng-template>
+        </p-column>
+      </p-dataTable>
+    </div>
+  </div>
+</div>
